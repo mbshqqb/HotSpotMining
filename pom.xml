@@ -21,6 +21,12 @@
     <!-- https://mvnrepository.com/artifact/com.mysql/connectorj -->
 
     <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>casbah-core_2.10</artifactId>
+      <version> 3.1.1</version>
+    </dependency>
+
+    <dependency>
       <groupId>commons-dbcp</groupId>
       <artifactId>commons-dbcp</artifactId>
       <version>1.4</version>
