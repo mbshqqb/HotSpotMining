@@ -14,6 +14,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.mongodb:casbah-core_2.10:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.10.5" level="project" />
+    <orderEntry type="library" name="Maven: org.mongodb:casbah-commons_2.10:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.nscala-time:nscala-time_2.10:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: joda-time:joda-time:2.3" level="project" />
+    <orderEntry type="library" name="Maven: org.joda:joda-convert:1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.mongodb:mongo-java-driver:3.2.2" level="project" />
+    <orderEntry type="library" name="Maven: org.mongodb:casbah-query_2.10:3.1.1" level="project" />
     <orderEntry type="library" name="Maven: commons-dbcp:commons-dbcp:1.4" level="project" />
     <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.spark:spark-sql_2.10:1.6.3" level="project" />
@@ -114,7 +122,6 @@
     <orderEntry type="library" name="Maven: com.typesafe:config:1.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.uncommons.maths:uncommons-maths:1.2.2a" level="project" />
     <orderEntry type="library" name="Maven: com.typesafe.akka:akka-slf4j_2.10:2.3.11" level="project" />
-    <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.10.5" level="project" />
     <orderEntry type="library" name="Maven: org.json4s:json4s-jackson_2.10:3.2.10" level="project" />
     <orderEntry type="library" name="Maven: org.json4s:json4s-core_2.10:3.2.10" level="project" />
     <orderEntry type="library" name="Maven: org.json4s:json4s-ast_2.10:3.2.10" level="project" />
@@ -151,7 +158,7 @@
     <orderEntry type="module-library">
       <library name="Maven: jdk.tools:jdk.tools:1.8">
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/jdk/tools/jdk.tools/1.8/jdk.tools-1.8.jar!/" />
+          <root url="jar://C:/Program Files/Java/jdk1.8.0_121/lib/tools.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
