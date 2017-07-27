@@ -1,0 +1,2 @@
+Main-Class: cn.tuoersi.main
+
