@@ -40,7 +40,7 @@ object LoadDataAndSplit {
   }
 
   def loadDataFromMongodbAndPretreat(sc:SparkContext,sqc:SQLContext): DataFrame ={//吴裕鑫负责将数据从mangoDB读入
-    println("------------------------------1.从mongoDB进行读取数据并进行分词操作-------------------------------------")
+    println("------------------------------1.从mongoDB进行读取数据并进行分词操作--------------------------------------")
     val helper = MongoHelper
     helper.setCollection("weibo","weibo_info")
     val list: List[Imports.DBObject] =helper.query(new mutable.HashMap[String,AnyRef](),new mutable.HashMap[String,Int]())

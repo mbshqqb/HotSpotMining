@@ -85,6 +85,6 @@ object MongoHelper {
    // helper.insert(queryMap)
   //  helper.update(queryMap,updateMap,false)
   val cursor: List[Imports.DBObject] =helper.query(new mutable.HashMap[String,AnyRef](),new mutable.HashMap[String,Int]())
- //   println(cursor.toList(0))
+
   }
 }
