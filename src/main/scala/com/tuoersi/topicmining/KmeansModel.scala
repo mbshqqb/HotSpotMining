@@ -1,6 +1,6 @@
 package com.tuoersi.topicmining
 
-import cn.tuoersi.Utils.DBUtil
+import com.tuoersi.utils.DBUtil
 import org.apache.spark.ml.clustering.{KMeans, KMeansModel}
 import org.apache.spark.sql.DataFrame
 /**

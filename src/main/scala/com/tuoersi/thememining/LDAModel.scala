@@ -4,6 +4,7 @@ package com.tuoersi.thememining
   * Created by bigdata on 2017/7/24.
   */
 
+import com.tuoersi.utils.DBUtil
 import org.apache.spark.ml.clustering.{LDA, LDAModel}
 import org.apache.spark.sql.DataFrame
 

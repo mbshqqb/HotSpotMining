@@ -6,9 +6,9 @@ package com.tuoersi
  */
 
 
-import cn.tuoersi.KmeansModelStage.KmeansModel
-import cn.tuoersi.LoadDataAndPretreatStage.LoadDataAndSplit
+import com.tuoersi.loadandpretreatdata.LoadDataAndSplit
 import com.tuoersi.thememining.LDAModel
+import com.tuoersi.topicmining.KmeansModel
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.ml.feature.CountVectorizer
 import org.apache.spark.sql.SQLContext
@@ -55,7 +55,8 @@ object Main {
     val sqc = new SQLContext(sc)
 
     println("-------------------------------------------程序开始运行！-------------------------------------------")
-    val weiboIdAndWordsDF = LoadDataAndSplit.loadDataFromHdfsAndPretreat(sc,sqc,"hdfs://172.17.11.208:9000/data/csvFile/weibo0.csv")
+    val weiboIdAndWordsDF = LoadDataAndSplit.loadDataFromMongodbAndPretreat(sc,sqc)
+    //val weiboIdAndWordsDF = LoadDataAndSplit.loadDataFromHdfsAndPretreat(sc,sqc,"hdfs://172.17.11.208:9000/data/csvFile/weibo0.csv")
     println("分词成功，返回一个DataFrame!接下来打印 该DataFrame：")
     weiboIdAndWordsDF.show(10)
 
