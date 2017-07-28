@@ -2,7 +2,8 @@ package com.tuoersi.utils
 
 
 
-import com.mongodb.casbah.{MongoClient, MongoCollection, MongoCursor}
+import com.mongodb.casbah
+import com.mongodb.casbah.{Imports, MongoClient, MongoCollection, MongoCursor}
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.casbah.query.Imports._
 import com.tuoersi.utils.MongoDBUtil.mongoClient
@@ -30,11 +31,11 @@ object MongoHelper {
     * 查询单条或者多条数据
     * @param where 查询的行 类型map key为查询的字段名，value为具体数值 (目前支持相等查询),如果Map对象为空，默认select *
     * @param projection 要查询的列 类型map key为投影的字段名，value 1表示选择投影，0不投影，如果Map对象为空，默认字段全选
-    * @return 返回值根据实际业务,这里暂定返回的MongoCursor游标
+    * @return 返回值根据实际业务,这里暂定为一个list[DbObject] DBObject 类似Map,可以直接理解为List[Map]，通过键值对得到对应值
     */
-  def query(where:mutable.HashMap[String,AnyRef],projection:mutable.HashMap[String,Int])={
+  def query(where:mutable.HashMap[String,AnyRef],projection:mutable.HashMap[String,Int]):List[casbah.Imports.DBObject] ={
     val cursor: MongoCursor =collection.find(DBObject.apply(where.toList),DBObject.apply(projection.toList) )
-    cursor
+    cursor.toList
   }
 
   /**
@@ -83,7 +84,7 @@ object MongoHelper {
    // updateMap.put("weibo_id1","233")
    // helper.insert(queryMap)
   //  helper.update(queryMap,updateMap,false)
-  val cursor: MongoCursor =helper.query(new mutable.HashMap[String,AnyRef](),new mutable.HashMap[String,Int]())
-    println(cursor.next().toMap.values())
+  val cursor: List[Imports.DBObject] =helper.query(new mutable.HashMap[String,AnyRef](),new mutable.HashMap[String,Int]())
+ //   println(cursor.toList(0))
   }
 }

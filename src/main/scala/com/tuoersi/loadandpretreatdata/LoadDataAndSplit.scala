@@ -55,7 +55,7 @@ object LoadDataAndSplit {
     //RDD[(weibo_id,weibo_content)]
     val originalRDD: RDD[(String, String)] =sc.makeRDD(set.toList)
     println("读取数据完毕，正在分词，请耐心等待...")
-    val weiboIdAndWordsRDD2 = originalRDD.repartition(10).map(x=>{
+    val weiboIdAndWordsRDD2 = originalRDD.map(x=>{
       val content =x._2
       WeiboIdAndWords2(x._1,AnaylyzerTools.anaylyzerWords(content.replaceAll("[“”！,]","").trim).trim.split(" "))
     })
