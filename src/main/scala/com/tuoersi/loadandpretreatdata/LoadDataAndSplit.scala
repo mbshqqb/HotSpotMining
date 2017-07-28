@@ -1,6 +1,6 @@
 package com.tuoersi.loadandpretreatdata
 
-import com.mongodb.casbah.MongoCursor
+import com.mongodb.casbah.{Imports, MongoCursor}
 import com.tuoersi.{WeiboIdAndWords, WeiboIdAndWords2}
 import com.tuoersi.utils.MongoHelper
 import org.apache.spark.{SparkConf, SparkContext}
@@ -41,26 +41,23 @@ object LoadDataAndSplit {
 
   def loadDataFromMongodbAndPretreat(sc:SparkContext,sqc:SQLContext): DataFrame ={//吴裕鑫负责将数据从mangoDB读入
     println("------------------------------1.从mongoDB进行读取数据并进行分词操作-------------------------------------")
-
-    val regax= "^\\u200b{1,5}".r
-
-
     val helper = MongoHelper
     helper.setCollection("weibo","weibo_info")
-    val cursor: MongoCursor =helper.query(new mutable.HashMap[String,AnyRef](),new mutable.HashMap[String,Int]())
+    val list: List[Imports.DBObject] =helper.query(new mutable.HashMap[String,AnyRef](),new mutable.HashMap[String,Int]())
+
     val set=  HashSet[(String,String)]()
-   while(cursor.hasNext){
-        val cursor_cur=cursor.next()
-        val weibo_id = cursor_cur.get("weibo_id").toString
-        val weibo_content = cursor_cur.get("weibo_content").toString
-        set.add((weibo_id,weibo_content))
-   }
-    //RDD[(weibo_id,weibo_content),id]
-    val originalRDD: RDD[((String, String), Long)] =sc.makeRDD(set.toList).zipWithUniqueId()
+    list.foreach(x=>{
+      val weibo_id = x.get("weibo_id").toString
+      val weibo_content = x.get("weibo_content").toString
+      set.add((weibo_id,weibo_content))}
+    )
+
+    //RDD[(weibo_id,weibo_content)]
+    val originalRDD: RDD[(String, String)] =sc.makeRDD(set.toList)
     println("读取数据完毕，正在分词，请耐心等待...")
     val weiboIdAndWordsRDD2 = originalRDD.repartition(10).map(x=>{
-      val content =x._1._2
-      WeiboIdAndWords2(x._2.toInt,x._1._1,AnaylyzerTools.anaylyzerWords(content.replace("[","").replace("]","").replaceAll("[“”！,]","")).trim.split(" "))
+      val content =x._2
+      WeiboIdAndWords2(x._1,AnaylyzerTools.anaylyzerWords(content.replaceAll("[“”！,]","").trim).trim.split(" "))
     })
     import  sqc.implicits._
     val weiboIdAndWordsDF2=weiboIdAndWordsRDD2.toDF().distinct()
@@ -73,7 +70,7 @@ object LoadDataAndSplit {
     val sc = new SparkContext(conf)
     val sqlContext = new SQLContext(sc)
     val DF=loadDataFromMongodbAndPretreat(sc,sqlContext)
-    DF.sort("id").show(100)
+    DF.show(100)
   }
 
 }
