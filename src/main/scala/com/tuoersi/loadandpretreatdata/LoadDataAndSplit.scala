@@ -1,9 +1,15 @@
 package com.tuoersi.loadandpretreatdata
 
-import cn.tuoersi.WeiboIdAndWords
-import org.apache.spark.SparkContext
+import com.mongodb.casbah.MongoCursor
+import com.tuoersi.{WeiboIdAndWords, WeiboIdAndWords2}
+import com.tuoersi.utils.MongoHelper
+import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import utils.AnaylyzerTools
+
+import scala.collection.mutable
+import scala.collection.mutable.HashSet
 
 /**
   * Created by bigdata on 2017/7/25.
@@ -33,10 +39,41 @@ object LoadDataAndSplit {
     weiboIdAndWordsDF
   }
 
-//  def loadDataFromMongodbAndPretreat(): DataFrame ={//吴裕鑫负责将数据从mangoDB读入
-//
-//  }
+  def loadDataFromMongodbAndPretreat(sc:SparkContext,sqc:SQLContext): DataFrame ={//吴裕鑫负责将数据从mangoDB读入
+    println("------------------------------1.从mongoDB进行读取数据并进行分词操作-------------------------------------")
+
+    val regax= "^\\u200b{1,5}".r
 
 
+    val helper = MongoHelper
+    helper.setCollection("weibo","weibo_info")
+    val cursor: MongoCursor =helper.query(new mutable.HashMap[String,AnyRef](),new mutable.HashMap[String,Int]())
+    val set=  HashSet[(String,String)]()
+   while(cursor.hasNext){
+        val cursor_cur=cursor.next()
+        val weibo_id = cursor_cur.get("weibo_id").toString
+        val weibo_content = cursor_cur.get("weibo_content").toString
+        set.add((weibo_id,weibo_content))
+   }
+    //RDD[(weibo_id,weibo_content),id]
+    val originalRDD: RDD[((String, String), Long)] =sc.makeRDD(set.toList).zipWithUniqueId()
+    println("读取数据完毕，正在分词，请耐心等待...")
+    val weiboIdAndWordsRDD2 = originalRDD.repartition(10).map(x=>{
+      val content =x._1._2
+      WeiboIdAndWords2(x._2.toInt,x._1._1,AnaylyzerTools.anaylyzerWords(content.replace("[","").replace("]","").replaceAll("[“”！,]","")).trim.split(" "))
+    })
+    import  sqc.implicits._
+    val weiboIdAndWordsDF2=weiboIdAndWordsRDD2.toDF().distinct()
+    helper.mongoClient.close()
+    weiboIdAndWordsDF2
+  }
+
+  def main(args: Array[String]): Unit = {
+    val conf = new SparkConf().setMaster("local[*]").setAppName("test")
+    val sc = new SparkContext(conf)
+    val sqlContext = new SQLContext(sc)
+    val DF=loadDataFromMongodbAndPretreat(sc,sqlContext)
+    DF.sort("id").show(100)
+  }
 
 }

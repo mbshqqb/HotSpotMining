@@ -16,15 +16,6 @@ object MongoDBUtil {
   def getClient():MongoClient={
       mongoClient
   }
-  /**
-    *
-    * @param dbname 数据库名称
-    * @param tablename 表名称
-    * @return DBCollection 集合（表）
-    */
-  def getCollection(dbname:String,tablename:String):MongoCollection={
-    mongoClient.getDB(dbname).apply(tablename)
-  }
 
   def colseCollection()={
     if(mongoClient!=null){

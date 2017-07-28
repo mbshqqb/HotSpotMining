@@ -2,9 +2,10 @@ package com.tuoersi.utils
 
 
 
-import com.mongodb.casbah.MongoCollection
+import com.mongodb.casbah.{MongoClient, MongoCollection, MongoCursor}
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.casbah.query.Imports._
+import com.tuoersi.utils.MongoDBUtil.mongoClient
 
 import scala.collection.mutable
 /**
@@ -12,19 +13,28 @@ import scala.collection.mutable
   */
 object MongoHelper {
   val mongodbUtil = MongoDBUtil
-  var collection:MongoCollection = mongodbUtil.getCollection("test","weibo_info")
-
+  var collection:MongoCollection = _
+  val mongoClient: MongoClient =mongodbUtil.getClient()
 
   /**
     *
-    * @param where 查询的行 类型map key为查询的字段名，value为具体数值 (目前支持相等查询)
-    * @param projection 要查询的列 类型map key为投影的字段名，value 1表示选择投影，0不投影
+    * @param dbname 数据库名称
+    * @param tablename 表名称
+    * @return DBCollection 集合（表）
+    */
+  def setCollection(dbname:String,tablename:String)={
+    collection=mongoClient.getDB(dbname).apply(tablename)
+  }
+
+  /**
+    * 查询单条或者多条数据
+    * @param where 查询的行 类型map key为查询的字段名，value为具体数值 (目前支持相等查询),如果Map对象为空，默认select *
+    * @param projection 要查询的列 类型map key为投影的字段名，value 1表示选择投影，0不投影，如果Map对象为空，默认字段全选
+    * @return 返回值根据实际业务,这里暂定返回的MongoCursor游标
     */
   def query(where:mutable.HashMap[String,AnyRef],projection:mutable.HashMap[String,Int])={
-    val cursor=collection.find(DBObject.apply(where.toList),DBObject.apply(projection.toList) )
-    cursor.toList.foreach(println)
-
-
+    val cursor: MongoCursor =collection.find(DBObject.apply(where.toList),DBObject.apply(projection.toList) )
+    cursor
   }
 
   /**
@@ -60,6 +70,7 @@ object MongoHelper {
   def main(args: Array[String]): Unit = {
     val a=MongoDBObject()
     val helper =MongoHelper
+    helper.setCollection("weibo","weibo_info")
     val queryMap =new mutable.HashMap[String,AnyRef]()
     queryMap.put("weibo_id","FedhJkXGF")
     queryMap.put("weibo_id1","FedhJkXGF1")
@@ -68,9 +79,11 @@ object MongoHelper {
 //    projectMap.put("weibo_id",1)
 //    projectMap.put("weibo_content",1)
     //  helper.query(queryMap,projectMap)
-    val updateMap = new mutable.HashMap[String,AnyRef]()
-    updateMap.put("weibo_id1","233")
+   // val updateMap = new mutable.HashMap[String,AnyRef]()
+   // updateMap.put("weibo_id1","233")
    // helper.insert(queryMap)
   //  helper.update(queryMap,updateMap,false)
+  val cursor: MongoCursor =helper.query(new mutable.HashMap[String,AnyRef](),new mutable.HashMap[String,Int]())
+    println(cursor.next().toMap.values())
   }
 }
